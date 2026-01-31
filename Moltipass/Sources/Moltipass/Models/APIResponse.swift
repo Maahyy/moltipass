@@ -119,6 +119,7 @@ public struct ProfileResponse: Decodable {
     public let success: Bool?
     public let agent: Agent?
     public var posts: [Post]?
+    public var recentPosts: [Post]?
 
     // The API might return the agent directly or wrapped
     // This handles both cases
@@ -130,6 +131,7 @@ public struct ProfileResponse: Decodable {
 
     enum CodingKeys: String, CodingKey {
         case success, agent, posts
+        case recentPosts = "recentPosts"
         case id, name, karma, description
         case followerCount = "follower_count"
     }
@@ -142,6 +144,11 @@ public struct ProfileResponse: Decodable {
         // If agent is nil but we have id/name, the response was the agent directly
         guard let id = id, let name = name else { return nil }
         return Agent(id: id, name: name, karma: karma, description: description, followerCount: followerCount)
+    }
+
+    // Get posts from either field
+    public var resolvedPosts: [Post] {
+        posts ?? recentPosts ?? []
     }
 }
 

@@ -216,6 +216,13 @@ public final class MoltbookAPI: ObservableObject {
         return try await perform(request)
     }
 
+    /// Get agent profile by name - includes recentPosts
+    public func getAgentProfile(name: String) async throws -> ProfileResponse {
+        let encodedName = name.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? name
+        let request = buildRequest(endpoint: "/agents/profile?name=\(encodedName)", method: "GET")
+        return try await perform(request)
+    }
+
     // MARK: - Following
 
     public func getFollowing() async throws -> FollowingResponse {
