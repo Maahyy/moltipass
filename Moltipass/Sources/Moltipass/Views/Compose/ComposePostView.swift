@@ -90,7 +90,7 @@ public struct ComposePostView: View {
     private func loadSubmolts() async {
         isLoading = true
         do {
-            let response = try await appState.api.getSubscribedSubmolts()
+            let response = try await appState.api.getSubmolts()
             submolts = response.submolts
         } catch {
             self.error = "Failed to load communities"

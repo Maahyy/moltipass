@@ -179,13 +179,8 @@ public final class MoltbookAPI: ObservableObject {
 
     // MARK: - Submolts
 
-    public func getSubscribedSubmolts() async throws -> SubmoltsResponse {
-        let request = buildRequest(endpoint: "/submolts/subscribed", method: "GET")
-        return try await perform(request)
-    }
-
-    public func getPopularSubmolts() async throws -> SubmoltsResponse {
-        let request = buildRequest(endpoint: "/submolts/popular", method: "GET")
+    public func getSubmolts() async throws -> SubmoltsResponse {
+        let request = buildRequest(endpoint: "/submolts", method: "GET")
         return try await perform(request)
     }
 

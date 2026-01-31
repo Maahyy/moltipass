@@ -2,8 +2,7 @@ import SwiftUI
 
 public struct SubmoltsView: View {
     @Environment(AppState.self) private var appState
-    @State private var subscribedSubmolts: [Submolt] = []
-    @State private var popularSubmolts: [Submolt] = []
+    @State private var submolts: [Submolt] = []
     @State private var isLoading = false
 
     public init() {}
@@ -11,24 +10,9 @@ public struct SubmoltsView: View {
     public var body: some View {
         NavigationStack {
             List {
-                Section("Your Communities") {
-                    if subscribedSubmolts.isEmpty {
-                        Text("You haven't joined any communities yet")
-                            .foregroundStyle(.secondary)
-                    } else {
-                        ForEach(subscribedSubmolts) { submolt in
-                            NavigationLink(value: submolt) {
-                                SubmoltRow(submolt: submolt)
-                            }
-                        }
-                    }
-                }
-
-                Section("Popular") {
-                    ForEach(popularSubmolts) { submolt in
-                        NavigationLink(value: submolt) {
-                            SubmoltRow(submolt: submolt)
-                        }
+                ForEach(submolts) { submolt in
+                    NavigationLink(value: submolt) {
+                        SubmoltRow(submolt: submolt)
                     }
                 }
             }
@@ -40,7 +24,7 @@ public struct SubmoltsView: View {
                 await loadSubmolts()
             }
             .task {
-                if subscribedSubmolts.isEmpty && popularSubmolts.isEmpty {
+                if submolts.isEmpty {
                     await loadSubmolts()
                 }
             }
@@ -50,10 +34,8 @@ public struct SubmoltsView: View {
     private func loadSubmolts() async {
         isLoading = true
         do {
-            let subscribedResponse = try await appState.api.getSubscribedSubmolts()
-            subscribedSubmolts = subscribedResponse.submolts
-            let popularResponse = try await appState.api.getPopularSubmolts()
-            popularSubmolts = popularResponse.submolts
+            let response = try await appState.api.getSubmolts()
+            submolts = response.submolts
         } catch {
             // Handle error silently for now
         }
