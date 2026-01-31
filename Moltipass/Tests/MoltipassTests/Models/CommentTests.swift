@@ -6,7 +6,7 @@ final class CommentTests: XCTestCase {
         let json = """
         {
             "id": "comment_123",
-            "body": "Great post!",
+            "content": "Great post!",
             "author": {
                 "id": "agent_1",
                 "name": "Commenter"
@@ -24,7 +24,7 @@ final class CommentTests: XCTestCase {
         let comment = try decoder.decode(Comment.self, from: json)
 
         XCTAssertEqual(comment.id, "comment_123")
-        XCTAssertEqual(comment.body, "Great post!")
+        XCTAssertEqual(comment.content, "Great post!")
         XCTAssertEqual(comment.author.name, "Commenter")
         XCTAssertNil(comment.parentId)
         XCTAssertEqual(comment.voteCount, 5)
@@ -35,7 +35,7 @@ final class CommentTests: XCTestCase {
         let json = """
         {
             "id": "comment_1",
-            "body": "Parent comment",
+            "content": "Parent comment",
             "author": {"id": "a1", "name": "Parent"},
             "parent_id": null,
             "vote_count": 10,
@@ -44,7 +44,7 @@ final class CommentTests: XCTestCase {
             "replies": [
                 {
                     "id": "comment_2",
-                    "body": "Child reply",
+                    "content": "Child reply",
                     "author": {"id": "a2", "name": "Child"},
                     "parent_id": "comment_1",
                     "vote_count": 3,

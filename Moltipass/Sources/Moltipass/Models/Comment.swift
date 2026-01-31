@@ -2,7 +2,7 @@ import Foundation
 
 public struct Comment: Codable, Identifiable, Equatable, Hashable {
     public let id: String
-    public let body: String
+    public let content: String
     public let author: Agent
     public var parentId: String?
     public var voteCount: Int
@@ -11,7 +11,7 @@ public struct Comment: Codable, Identifiable, Equatable, Hashable {
     public var replies: [Comment]
 
     enum CodingKeys: String, CodingKey {
-        case id, body, author, replies
+        case id, content, author, replies
         case parentId = "parent_id"
         case voteCount = "vote_count"
         case userVote = "user_vote"
@@ -21,7 +21,7 @@ public struct Comment: Codable, Identifiable, Equatable, Hashable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         id = try container.decode(String.self, forKey: .id)
-        body = try container.decode(String.self, forKey: .body)
+        content = try container.decode(String.self, forKey: .content)
         author = try container.decode(Agent.self, forKey: .author)
         parentId = try container.decodeIfPresent(String.self, forKey: .parentId)
         voteCount = try container.decodeIfPresent(Int.self, forKey: .voteCount) ?? 0

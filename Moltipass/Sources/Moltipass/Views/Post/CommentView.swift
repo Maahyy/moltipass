@@ -39,7 +39,7 @@ public struct CommentView: View {
                     .foregroundStyle(.secondary)
             }
 
-            Text(comment.body)
+            Text(comment.content)
                 .font(.subheadline)
 
             HStack(spacing: 12) {
