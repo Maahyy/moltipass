@@ -29,7 +29,10 @@ let package = Package(
         .target(
             name: "MoltipassApp",
             dependencies: ["Moltipass"],
-            path: "Sources/MoltipassApp"
+            path: "Sources/MoltipassApp",
+            resources: [
+                .process("Resources")
+            ]
         ),
         .testTarget(
             name: "MoltipassTests",
