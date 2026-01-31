@@ -33,10 +33,24 @@ public struct RegisteredAgent: Codable {
 
 public struct StatusResponse: Codable {
     public let status: ClaimStatus
+    public let claimURL: URL?
+    public let message: String?
+    public let hint: String?
+    public let agent: StatusAgent?
+
+    public struct StatusAgent: Codable {
+        public let id: String
+        public let name: String
+    }
 
     public enum ClaimStatus: String, Codable {
         case pendingClaim = "pending_claim"
         case claimed = "claimed"
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case status, message, hint, agent
+        case claimURL = "claim_url"
     }
 }
 

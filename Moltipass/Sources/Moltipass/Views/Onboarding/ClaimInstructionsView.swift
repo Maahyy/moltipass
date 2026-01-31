@@ -25,72 +25,130 @@ public struct ClaimInstructionsView: View {
 
     public var body: some View {
         NavigationStack {
-            VStack(spacing: 24) {
-                Image(systemName: "checkmark.seal")
-                    .font(.system(size: 60))
-                    .foregroundStyle(.blue)
+            ScrollView {
+                VStack(spacing: 20) {
+                    Image(systemName: "checkmark.seal")
+                        .font(.system(size: 50))
+                        .foregroundStyle(.blue)
 
-                Text("Claim Your Agent")
-                    .font(.title2)
-                    .fontWeight(.semibold)
+                    Text("Claim Your Agent")
+                        .font(.title2)
+                        .fontWeight(.semibold)
 
-                VStack(spacing: 8) {
-                    Text("Post this code on Twitter/X:")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
+                    // Step 1: Verification Code
+                    GroupBox {
+                        VStack(spacing: 12) {
+                            Label("Step 1: Copy Verification Code", systemImage: "1.circle.fill")
+                                .font(.headline)
+                                .frame(maxWidth: .infinity, alignment: .leading)
 
-                    Text(verificationCode)
-                        .font(.system(.title, design: .monospaced))
-                        .fontWeight(.bold)
-                        .padding()
-                        .background(Color.secondary.opacity(0.2))
-                        .cornerRadius(8)
+                            Text(verificationCode)
+                                .font(.system(.title2, design: .monospaced))
+                                .fontWeight(.bold)
+                                .padding()
+                                .frame(maxWidth: .infinity)
+                                .background(Color.secondary.opacity(0.15))
+                                .cornerRadius(8)
 
-                    Button("Copy Code") {
-                        copyToClipboard(verificationCode)
+                            Button("Copy Code") {
+                                copyToClipboard(verificationCode)
+                            }
+                            .buttonStyle(.bordered)
+                        }
                     }
-                    .font(.caption)
-                }
 
-                Button("Open Twitter") {
-                    openTwitter()
-                }
-                .buttonStyle(.borderedProminent)
+                    // Step 2: Post Tweet
+                    GroupBox {
+                        VStack(spacing: 12) {
+                            Label("Step 2: Post on Twitter/X", systemImage: "2.circle.fill")
+                                .font(.headline)
+                                .frame(maxWidth: .infinity, alignment: .leading)
 
-                if let claimURL = claimURL {
-                    Button("Open Claim Page") {
-                        openURL(claimURL)
+                            Text("Tweet the verification code to prove you control this account.")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+
+                            Button("Open Twitter") {
+                                openTwitter()
+                            }
+                            .buttonStyle(.borderedProminent)
+                        }
                     }
-                    .buttonStyle(.bordered)
-                }
 
-                Divider()
+                    // Step 3: Visit Claim Page
+                    GroupBox {
+                        VStack(spacing: 12) {
+                            Label("Step 3: Complete Claim", systemImage: "3.circle.fill")
+                                .font(.headline)
+                                .frame(maxWidth: .infinity, alignment: .leading)
 
-                if isVerifying {
-                    VStack(spacing: 8) {
-                        ProgressView()
-                        Text("Verifying your claim...")
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
+                            Text("Visit the claim page and sign in with X to verify.")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+
+                            if let claimURL = claimURL {
+                                Button("Open Claim Page") {
+                                    openURL(claimURL)
+                                }
+                                .buttonStyle(.borderedProminent)
+
+                                Text(claimURL.absoluteString)
+                                    .font(.caption2)
+                                    .foregroundStyle(.secondary)
+                                    .lineLimit(2)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+
+                                Button("Copy Claim URL") {
+                                    copyToClipboard(claimURL.absoluteString)
+                                }
+                                .font(.caption)
+                            } else {
+                                Text("Claim URL not available. Try restarting the app.")
+                                    .font(.caption)
+                                    .foregroundStyle(.orange)
+                            }
+                        }
                     }
-                } else if let error = error {
-                    VStack(spacing: 8) {
-                        Text(error)
-                            .foregroundStyle(.red)
-                            .font(.subheadline)
-                        Button("Try Again") {
+
+                    Divider()
+
+                    // Verification Status
+                    if isVerifying {
+                        VStack(spacing: 8) {
+                            ProgressView()
+                            Text("Checking claim status... (\(pollCount)/\(maxPolls))")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                        }
+                    } else if let error = error {
+                        VStack(spacing: 8) {
+                            Text(error)
+                                .foregroundStyle(.red)
+                                .font(.subheadline)
+                                .multilineTextAlignment(.center)
+                            Button("Check Again") {
+                                Task { await startVerification() }
+                            }
+                            .buttonStyle(.bordered)
+                        }
+                    } else {
+                        Button("Check Claim Status") {
                             Task { await startVerification() }
                         }
                         .buttonStyle(.bordered)
                     }
-                } else {
-                    Button("I've Posted It") {
-                        Task { await startVerification() }
+
+                    Divider()
+
+                    Button("Sign Out & Start Over", role: .destructive) {
+                        appState.signOut()
                     }
-                    .buttonStyle(.bordered)
+                    .font(.caption)
                 }
+                .padding()
             }
-            .padding()
             .navigationTitle("Verification")
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)

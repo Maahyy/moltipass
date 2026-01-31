@@ -40,14 +40,21 @@ public class AppState {
 
         do {
             let status = try await api.checkStatus()
-            logger.info("Status check returned: \(status.status.rawValue)")
+            logger.info("Status check returned: \(status.status.rawValue), agent: \(status.agent?.name ?? "nil")")
             switch status.status {
             case .claimed:
                 authStatus = .authenticated
             case .pendingClaim:
                 if let code = keychain.retrieve(key: verificationCodeKey), !code.isEmpty {
-                    let claimURL = keychain.retrieve(key: claimURLKey).flatMap { URL(string: $0) }
-                    logger.info("Restored pending claim with code: \(code)")
+                    // Prefer claimURL from API response, fall back to saved
+                    var claimURL = status.claimURL
+                    if claimURL == nil {
+                        claimURL = keychain.retrieve(key: claimURLKey).flatMap { URL(string: $0) }
+                    } else if let url = claimURL {
+                        // Save the fresh URL from API
+                        keychain.save(key: claimURLKey, value: url.absoluteString)
+                    }
+                    logger.info("Restored pending claim with code: \(code), claimURL: \(claimURL?.absoluteString ?? "nil")")
                     authStatus = .pendingClaim(verificationCode: code, claimURL: claimURL)
                 } else {
                     logger.error("API key valid but no verification code saved - corrupt state")
