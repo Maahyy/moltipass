@@ -27,8 +27,7 @@ public struct FeedView: View {
                 }
             }
             .sheet(isPresented: $showCompose) {
-                // TODO: Replace with ComposePostView when available
-                ComposePostPlaceholder()
+                ComposePostView()
             }
         }
         .task {
@@ -94,22 +93,4 @@ struct FeedContent: View {
     }
 }
 
-// MARK: - Placeholder Views (to be replaced)
-
-/// Placeholder for ComposePostView - will be implemented in Task 7.1-7.2
-struct ComposePostPlaceholder: View {
-    @Environment(\.dismiss) private var dismiss
-
-    var body: some View {
-        NavigationStack {
-            Text("Compose Post - Coming Soon")
-                .navigationTitle("New Post")
-                .toolbar {
-                    ToolbarItem(placement: .cancellationAction) {
-                        Button("Cancel") { dismiss() }
-                    }
-                }
-        }
-    }
-}
 

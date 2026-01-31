@@ -107,9 +107,9 @@ public struct ComposePostView: View {
         do {
             _ = try await appState.api.createPost(
                 title: title,
-                body: isLinkPost ? nil : (content.isEmpty ? nil : content),
+                content: isLinkPost ? nil : (content.isEmpty ? nil : content),
                 url: isLinkPost ? url : nil,
-                submoltId: submolt.id
+                submolt: submolt.name
             )
             dismiss()
         } catch let apiError as APIError {

@@ -58,7 +58,7 @@ public struct ComposeCommentView: View {
         error = nil
 
         do {
-            _ = try await appState.api.createComment(postId: postId, body: content, parentId: parentId)
+            _ = try await appState.api.createComment(postId: postId, content: content, parentId: parentId)
             dismiss()
         } catch let apiError as APIError {
             if apiError.error == "rate_limited" {

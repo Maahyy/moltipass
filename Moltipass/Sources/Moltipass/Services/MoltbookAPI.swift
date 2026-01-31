@@ -137,8 +137,8 @@ public final class MoltbookAPI: ObservableObject {
         return try await perform(request)
     }
 
-    public func createPost(title: String, body: String?, url: String?, submoltId: String) async throws -> Post {
-        let payload = CreatePostRequest(title: title, body: body, url: url, submoltId: submoltId)
+    public func createPost(title: String, content: String?, url: String?, submolt: String) async throws -> Post {
+        let payload = CreatePostRequest(title: title, content: content, url: url, submolt: submolt)
         let data = try JSONEncoder().encode(payload)
         let request = buildRequest(endpoint: "/posts", method: "POST", body: data)
         return try await perform(request)
@@ -156,8 +156,8 @@ public final class MoltbookAPI: ObservableObject {
         return try await perform(request)
     }
 
-    public func createComment(postId: String, body: String, parentId: String? = nil) async throws -> Comment {
-        let payload = CreateCommentRequest(body: body, parentId: parentId)
+    public func createComment(postId: String, content: String, parentId: String? = nil) async throws -> Comment {
+        let payload = CreateCommentRequest(content: content, parentId: parentId)
         let data = try JSONEncoder().encode(payload)
         let request = buildRequest(endpoint: "/posts/\(postId)/comments", method: "POST", body: data)
         return try await perform(request)
@@ -166,16 +166,14 @@ public final class MoltbookAPI: ObservableObject {
     // MARK: - Voting
 
     public func votePost(id: String, direction: Int) async throws {
-        let payload = VoteRequest(direction: direction)
-        let data = try JSONEncoder().encode(payload)
-        let request = buildRequest(endpoint: "/posts/\(id)/vote", method: "POST", body: data)
+        let endpoint = direction > 0 ? "/posts/\(id)/upvote" : "/posts/\(id)/downvote"
+        let request = buildRequest(endpoint: endpoint, method: "POST")
         let _: EmptyResponse = try await perform(request)
     }
 
     public func voteComment(id: String, direction: Int) async throws {
-        let payload = VoteRequest(direction: direction)
-        let data = try JSONEncoder().encode(payload)
-        let request = buildRequest(endpoint: "/comments/\(id)/vote", method: "POST", body: data)
+        let endpoint = direction > 0 ? "/comments/\(id)/upvote" : "/comments/\(id)/downvote"
+        let request = buildRequest(endpoint: endpoint, method: "POST")
         let _: EmptyResponse = try await perform(request)
     }
 
@@ -262,14 +260,9 @@ public enum FeedSort: String, Sendable {
 
 public struct CreatePostRequest: Encodable, Sendable {
     public let title: String
-    public let body: String?
+    public let content: String?
     public let url: String?
-    public let submoltId: String
-
-    enum CodingKeys: String, CodingKey {
-        case title, body, url
-        case submoltId = "submolt_id"
-    }
+    public let submolt: String
 }
 
 public enum CommentSort: String, Sendable {
@@ -277,17 +270,13 @@ public enum CommentSort: String, Sendable {
 }
 
 public struct CreateCommentRequest: Encodable, Sendable {
-    public let body: String
+    public let content: String
     public let parentId: String?
 
     enum CodingKeys: String, CodingKey {
-        case body
+        case content
         case parentId = "parent_id"
     }
-}
-
-public struct VoteRequest: Encodable, Sendable {
-    public let direction: Int
 }
 
 public enum SearchScope: String, Sendable {
