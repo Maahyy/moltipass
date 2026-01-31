@@ -1,0 +1,129 @@
+import SwiftUI
+
+public struct FeedView: View {
+    @Environment(AppState.self) private var appState
+    @State private var viewModel: FeedViewModel?
+    @State private var showCompose = false
+
+    public init() {}
+
+    public var body: some View {
+        NavigationStack {
+            Group {
+                if let viewModel = viewModel {
+                    FeedContent(viewModel: viewModel)
+                } else {
+                    ProgressView()
+                }
+            }
+            .navigationTitle("Feed")
+            .toolbar {
+                ToolbarItem(placement: .primaryAction) {
+                    Button {
+                        showCompose = true
+                    } label: {
+                        Image(systemName: "plus")
+                    }
+                }
+            }
+            .sheet(isPresented: $showCompose) {
+                // TODO: Replace with ComposePostView when available
+                ComposePostPlaceholder()
+            }
+        }
+        .task {
+            if viewModel == nil {
+                viewModel = FeedViewModel(api: appState.api)
+                await viewModel?.loadFeed()
+            }
+        }
+    }
+}
+
+struct FeedContent: View {
+    @Bindable var viewModel: FeedViewModel
+
+    var body: some View {
+        VStack(spacing: 0) {
+            Picker("Sort", selection: $viewModel.selectedSort) {
+                Text("Hot").tag(FeedSort.hot)
+                Text("New").tag(FeedSort.new)
+                Text("Top").tag(FeedSort.top)
+                Text("Rising").tag(FeedSort.rising)
+            }
+            .pickerStyle(.segmented)
+            .padding()
+            .onChange(of: viewModel.selectedSort) {
+                Task { await viewModel.loadFeed(refresh: true) }
+            }
+
+            if let error = viewModel.error {
+                ContentUnavailableView {
+                    Label("Error", systemImage: "exclamationmark.triangle")
+                } description: {
+                    Text(error)
+                } actions: {
+                    Button("Retry") {
+                        Task { await viewModel.loadFeed(refresh: true) }
+                    }
+                }
+            } else {
+                List {
+                    ForEach(viewModel.posts) { post in
+                        NavigationLink(value: post) {
+                            PostCellView(post: post) { direction in
+                                Task { await viewModel.vote(post: post, direction: direction) }
+                            }
+                        }
+                    }
+
+                    if viewModel.isLoading {
+                        ProgressView()
+                            .frame(maxWidth: .infinity)
+                    }
+                }
+                .listStyle(.plain)
+                .refreshable {
+                    await viewModel.loadFeed(refresh: true)
+                }
+                .navigationDestination(for: Post.self) { post in
+                    // TODO: Replace with PostDetailView when available
+                    PostDetailPlaceholder(post: post)
+                }
+            }
+        }
+    }
+}
+
+// MARK: - Placeholder Views (to be replaced)
+
+/// Placeholder for ComposePostView - will be implemented in Task 7.1-7.2
+struct ComposePostPlaceholder: View {
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            Text("Compose Post - Coming Soon")
+                .navigationTitle("New Post")
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Cancel") { dismiss() }
+                    }
+                }
+        }
+    }
+}
+
+/// Placeholder for PostDetailView - will be implemented in Task 6.1-6.2
+struct PostDetailPlaceholder: View {
+    let post: Post
+
+    var body: some View {
+        VStack {
+            Text(post.title)
+                .font(.headline)
+            Text("Post Detail - Coming Soon")
+        }
+        .navigationTitle("Post")
+    }
+}

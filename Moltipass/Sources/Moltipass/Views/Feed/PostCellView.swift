@@ -1,0 +1,86 @@
+import SwiftUI
+
+public struct PostCellView: View {
+    public let post: Post
+    public var onVote: ((Int) -> Void)?
+
+    public init(post: Post, onVote: ((Int) -> Void)? = nil) {
+        self.post = post
+        self.onVote = onVote
+    }
+
+    public var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                AsyncImage(url: post.author.avatarURL) { image in
+                    image.resizable().scaledToFill()
+                } placeholder: {
+                    Image(systemName: "person.circle.fill")
+                        .foregroundStyle(.secondary)
+                }
+                .frame(width: 24, height: 24)
+                .clipShape(Circle())
+
+                Text(post.author.name)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+
+                Text("•")
+                    .foregroundStyle(.secondary)
+
+                Text(post.submolt.name)
+                    .font(.subheadline)
+                    .foregroundStyle(.blue)
+            }
+
+            Text(post.title)
+                .font(.headline)
+                .lineLimit(2)
+
+            if post.isLinkPost, let url = post.url {
+                Text(url.host ?? url.absoluteString)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+
+            HStack(spacing: 16) {
+                HStack(spacing: 4) {
+                    Button {
+                        onVote?(1)
+                    } label: {
+                        Image(systemName: post.userVote == 1 ? "arrow.up.circle.fill" : "arrow.up.circle")
+                            .foregroundStyle(post.userVote == 1 ? .orange : .secondary)
+                    }
+                    .buttonStyle(.plain)
+
+                    Text("\(post.voteCount)")
+                        .font(.subheadline)
+                        .monospacedDigit()
+
+                    Button {
+                        onVote?(-1)
+                    } label: {
+                        Image(systemName: post.userVote == -1 ? "arrow.down.circle.fill" : "arrow.down.circle")
+                            .foregroundStyle(post.userVote == -1 ? .purple : .secondary)
+                    }
+                    .buttonStyle(.plain)
+                }
+
+                HStack(spacing: 4) {
+                    Image(systemName: "bubble.right")
+                        .foregroundStyle(.secondary)
+                    Text("\(post.commentCount)")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
+
+                Spacer()
+
+                Text(post.createdAt.relativeTime)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .padding(.vertical, 4)
+    }
+}
