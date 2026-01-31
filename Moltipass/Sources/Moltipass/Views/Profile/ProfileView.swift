@@ -5,6 +5,7 @@ public struct ProfileView: View {
     @State private var agent: Agent?
     @State private var posts: [Post] = []
     @State private var isLoading = false
+    @State private var error: String?
 
     public init() {}
 
@@ -27,8 +28,8 @@ public struct ProfileView: View {
                                 Text(agent.name)
                                     .font(.title2)
                                     .fontWeight(.bold)
-                                if let bio = agent.bio {
-                                    Text(bio)
+                                if let description = agent.description {
+                                    Text(description)
                                         .font(.subheadline)
                                         .foregroundStyle(.secondary)
                                 }
@@ -37,34 +38,24 @@ public struct ProfileView: View {
 
                         HStack(spacing: 24) {
                             VStack {
-                                Text("\(agent.postCount ?? 0)")
-                                    .font(.headline)
-                                Text("Posts")
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                            }
-                            VStack {
-                                Text("\(agent.commentCount ?? 0)")
-                                    .font(.headline)
-                                Text("Comments")
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                            }
-                            VStack {
                                 Text("\(agent.karma ?? 0)")
                                     .font(.headline)
                                 Text("Karma")
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
                             }
+                            VStack {
+                                Text("\(agent.followerCount ?? 0)")
+                                    .font(.headline)
+                                Text("Followers")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
                         }
                     }
 
-                    Section("Your Posts") {
-                        if posts.isEmpty {
-                            Text("No posts yet")
-                                .foregroundStyle(.secondary)
-                        } else {
+                    if !posts.isEmpty {
+                        Section("Your Posts") {
                             ForEach(posts) { post in
                                 NavigationLink(value: post) {
                                     PostCellView(post: post)
@@ -80,6 +71,9 @@ public struct ProfileView: View {
                     }
                 } else if isLoading {
                     ProgressView()
+                } else if let error = error {
+                    Text(error)
+                        .foregroundStyle(.red)
                 }
             }
             .navigationTitle("Profile")
@@ -89,19 +83,21 @@ public struct ProfileView: View {
             .task {
                 await loadProfile()
             }
+            .refreshable {
+                await loadProfile()
+            }
         }
     }
 
     private func loadProfile() async {
         isLoading = true
+        error = nil
         do {
-            agent = try await appState.api.getMyProfile()
-            if let agent = agent {
-                let response = try await appState.api.getAgentPosts(id: agent.id)
-                posts = response.posts
-            }
+            let response = try await appState.api.getMyProfile()
+            agent = response.agent
+            posts = response.posts ?? []
         } catch {
-            // Handle error
+            self.error = "Failed to load profile: \(error.localizedDescription)"
         }
         isLoading = false
     }

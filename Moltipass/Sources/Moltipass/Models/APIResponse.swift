@@ -87,10 +87,45 @@ public struct SearchResponse: Codable {
 
 public struct EmptyResponse: Decodable {}
 
+public struct CreatePostResponse: Decodable {
+    public let success: Bool
+    public let post: Post?
+    public let message: String?
+}
+
+public struct CreateCommentResponse: Decodable {
+    public let success: Bool
+    public let comment: Comment?
+    public let message: String?
+}
+
 public struct SubmoltsResponse: Decodable {
     public let submolts: [Submolt]
 }
 
+public struct SubmoltDetailResponse: Decodable {
+    public let success: Bool
+    public let submolt: Submolt
+    public let posts: [Post]
+    public var yourRole: String?
+
+    enum CodingKeys: String, CodingKey {
+        case success, submolt, posts
+        case yourRole = "your_role"
+    }
+}
+
+public struct ProfileResponse: Decodable {
+    public let success: Bool
+    public let agent: Agent
+    public var posts: [Post]?
+}
+
 public struct FollowingResponse: Decodable {
     public let agents: [Agent]
+}
+
+public struct SubscribeResponse: Decodable {
+    public let success: Bool
+    public let message: String?
 }

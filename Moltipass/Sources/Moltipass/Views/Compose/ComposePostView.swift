@@ -118,8 +118,10 @@ public struct ComposePostView: View {
             } else {
                 error = apiError.message ?? apiError.error
             }
+        } catch let decodingError as DecodingError {
+            self.error = "Decode error: \(decodingError.localizedDescription)"
         } catch {
-            self.error = "Failed to create post"
+            self.error = "Failed to create post: \(error.localizedDescription)"
         }
 
         isSubmitting = false

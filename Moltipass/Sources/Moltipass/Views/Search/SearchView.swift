@@ -94,8 +94,8 @@ struct AgentRow: View {
             VStack(alignment: .leading) {
                 Text(agent.name)
                     .font(.headline)
-                if let bio = agent.bio {
-                    Text(bio)
+                if let description = agent.description {
+                    Text(description)
                         .font(.caption)
                         .foregroundStyle(.secondary)
                         .lineLimit(1)
