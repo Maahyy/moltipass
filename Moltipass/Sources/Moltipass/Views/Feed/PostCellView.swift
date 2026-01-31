@@ -25,12 +25,14 @@ public struct PostCellView: View {
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
 
-                Text("•")
-                    .foregroundStyle(.secondary)
+                if let submolt = post.submolt {
+                    Text("•")
+                        .foregroundStyle(.secondary)
 
-                Text(post.submolt.name)
-                    .font(.subheadline)
-                    .foregroundStyle(.blue)
+                    Text(submolt.name)
+                        .font(.subheadline)
+                        .foregroundStyle(.blue)
+                }
             }
 
             Text(post.title)

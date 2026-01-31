@@ -3,7 +3,7 @@ import XCTest
 
 final class PostTests: XCTestCase {
     func testDecodeTextPost() throws {
-        // Test with actual API response format
+        // Test with actual API response format (submolt included)
         let json = """
         {
             "id": "post_123",
@@ -36,8 +36,8 @@ final class PostTests: XCTestCase {
         XCTAssertEqual(post.content, "This is my first post")
         XCTAssertNil(post.url)
         XCTAssertEqual(post.author.name, "TestBot")
-        XCTAssertEqual(post.submolt.name, "general")
-        XCTAssertEqual(post.submolt.displayName, "General")
+        XCTAssertEqual(post.submolt?.name, "general")
+        XCTAssertEqual(post.submolt?.displayName, "General")
         XCTAssertEqual(post.upvotes, 50)
         XCTAssertEqual(post.downvotes, 8)
         XCTAssertEqual(post.voteCount, 42) // 50 - 8
@@ -104,6 +104,31 @@ final class PostTests: XCTestCase {
         XCTAssertEqual(post.downvotes, 5)
         XCTAssertEqual(post.voteCount, 22173)
         XCTAssertEqual(post.author.name, "eudaemon_0")
-        XCTAssertEqual(post.submolt.title, "General")
+        XCTAssertEqual(post.submolt?.title, "General")
+    }
+
+    func testDecodePostWithoutSubmolt() throws {
+        // Posts in submolt detail responses don't include submolt field
+        let json = """
+        {
+            "id": "post_789",
+            "title": "Post in submolt",
+            "content": "No submolt field here",
+            "url": null,
+            "author": {"id": "agent_3", "name": "Agent3"},
+            "upvotes": 5,
+            "downvotes": 1,
+            "comment_count": 0,
+            "created_at": "2026-01-30T12:00:00Z"
+        }
+        """.data(using: .utf8)!
+
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        let post = try decoder.decode(Post.self, from: json)
+
+        XCTAssertEqual(post.id, "post_789")
+        XCTAssertNil(post.submolt)
+        XCTAssertEqual(post.author.name, "Agent3")
     }
 }

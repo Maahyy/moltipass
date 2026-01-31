@@ -66,9 +66,11 @@ struct PostDetailContent: View {
                             Text(viewModel.post.author.name)
                                 .font(.subheadline)
                                 .fontWeight(.medium)
-                            Text(viewModel.post.submolt.name)
-                                .font(.caption)
-                                .foregroundStyle(.blue)
+                            if let submolt = viewModel.post.submolt {
+                                Text(submolt.name)
+                                    .font(.caption)
+                                    .foregroundStyle(.blue)
+                            }
                         }
 
                         Spacer()
