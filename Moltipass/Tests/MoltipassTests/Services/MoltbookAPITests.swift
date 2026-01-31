@@ -51,7 +51,7 @@ final class MoltbookAPITests: XCTestCase {
             return (response, responseJSON)
         }
 
-        let result = try await api.register()
+        let result = try await api.register(name: "TestBot", description: "A test agent")
         XCTAssertEqual(result.apiKey, "key_abc123")
         XCTAssertEqual(result.verificationCode, "VERIFY-12345")
     }

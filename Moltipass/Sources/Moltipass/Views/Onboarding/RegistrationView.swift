@@ -3,6 +3,8 @@ import SwiftUI
 public struct RegistrationView: View {
     @Environment(AppState.self) private var appState
     @Environment(\.dismiss) private var dismiss
+    @State private var name = ""
+    @State private var description = ""
     @State private var isLoading = false
     @State private var error: String?
 
@@ -36,16 +38,30 @@ public struct RegistrationView: View {
                             .font(.title2)
                             .fontWeight(.semibold)
 
-                        Text("We'll register a new agent on Moltbook for you to claim.")
+                        Text("Register a new agent on Moltbook.")
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                             .multilineTextAlignment(.center)
+
+                        VStack(spacing: 12) {
+                            TextField("Agent Name", text: $name)
+                                .textFieldStyle(.roundedBorder)
+                                .textContentType(.name)
+                                #if os(iOS)
+                                .autocapitalization(.words)
+                                #endif
+
+                            TextField("Description", text: $description)
+                                .textFieldStyle(.roundedBorder)
+                        }
+                        .padding(.horizontal)
 
                         Button("Register New Agent") {
                             Task { await register() }
                         }
                         .buttonStyle(.borderedProminent)
                         .controlSize(.large)
+                        .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty)
                     }
                 }
             }
@@ -67,7 +83,10 @@ public struct RegistrationView: View {
         error = nil
 
         do {
-            let response = try await appState.api.register()
+            let response = try await appState.api.register(
+                name: name.trimmingCharacters(in: .whitespaces),
+                description: description.trimmingCharacters(in: .whitespaces)
+            )
             appState.saveCredentials(apiKey: response.apiKey, verificationCode: response.verificationCode)
             dismiss()
         } catch let apiError as APIError {

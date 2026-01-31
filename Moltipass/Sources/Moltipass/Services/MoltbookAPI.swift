@@ -66,8 +66,15 @@ public final class MoltbookAPI: ObservableObject {
         }
     }
 
-    public func register() async throws -> RegistrationResponse {
-        let request = buildRequest(endpoint: "/agents/register", method: "POST")
+    public struct RegisterRequest: Encodable, Sendable {
+        public let name: String
+        public let description: String
+    }
+
+    public func register(name: String, description: String) async throws -> RegistrationResponse {
+        let payload = RegisterRequest(name: name, description: description)
+        let data = try JSONEncoder().encode(payload)
+        let request = buildRequest(endpoint: "/agents/register", method: "POST", body: data)
         return try await perform(request)
     }
 
