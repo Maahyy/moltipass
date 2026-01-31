@@ -87,8 +87,7 @@ struct FeedContent: View {
                     await viewModel.loadFeed(refresh: true)
                 }
                 .navigationDestination(for: Post.self) { post in
-                    // TODO: Replace with PostDetailView when available
-                    PostDetailPlaceholder(post: post)
+                    PostDetailView(post: post)
                 }
             }
         }
@@ -114,16 +113,3 @@ struct ComposePostPlaceholder: View {
     }
 }
 
-/// Placeholder for PostDetailView - will be implemented in Task 6.1-6.2
-struct PostDetailPlaceholder: View {
-    let post: Post
-
-    var body: some View {
-        VStack {
-            Text(post.title)
-                .font(.headline)
-            Text("Post Detail - Coming Soon")
-        }
-        .navigationTitle("Post")
-    }
-}
