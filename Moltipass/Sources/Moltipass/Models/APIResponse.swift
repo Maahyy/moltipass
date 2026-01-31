@@ -93,6 +93,12 @@ public struct SearchResponse: Codable {
 
 public struct EmptyResponse: Decodable {}
 
+public struct VoteResponse: Decodable {
+    public let success: Bool
+    public let message: String?
+    public let action: String?
+}
+
 public struct CreatePostResponse: Decodable {
     public let success: Bool
     public let post: Post?

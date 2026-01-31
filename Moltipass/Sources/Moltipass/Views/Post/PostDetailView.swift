@@ -156,7 +156,9 @@ struct PostDetailContent: View {
                             .padding()
                     } else {
                         ForEach(viewModel.comments) { comment in
-                            CommentView(comment: comment, postId: viewModel.post.id, depth: 0)
+                            CommentView(comment: comment, postId: viewModel.post.id, depth: 0) { commentId, direction in
+                                Task { await viewModel.voteComment(id: commentId, direction: direction) }
+                            }
                         }
                     }
                 }

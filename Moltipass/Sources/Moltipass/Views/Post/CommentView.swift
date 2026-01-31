@@ -5,14 +5,20 @@ public struct CommentView: View {
     public let comment: Comment
     public let postId: String
     public let depth: Int
+    public var onVote: ((String, Int) -> Void)?
     @State private var showReply = false
+    @State private var localUpvotes: Int
+    @State private var localDownvotes: Int
 
     private let maxDepth = 3
 
-    public init(comment: Comment, postId: String, depth: Int) {
+    public init(comment: Comment, postId: String, depth: Int, onVote: ((String, Int) -> Void)? = nil) {
         self.comment = comment
         self.postId = postId
         self.depth = depth
+        self.onVote = onVote
+        self._localUpvotes = State(initialValue: comment.upvotes)
+        self._localDownvotes = State(initialValue: comment.downvotes)
     }
 
     public var body: some View {
@@ -46,14 +52,26 @@ public struct CommentView: View {
 
             HStack(spacing: 12) {
                 HStack(spacing: 4) {
-                    Image(systemName: comment.userVote == 1 ? "arrow.up.circle.fill" : "arrow.up.circle")
-                        .foregroundStyle(comment.userVote == 1 ? .orange : .secondary)
+                    Button {
+                        localUpvotes += 1
+                        onVote?(comment.id, 1)
+                    } label: {
+                        Image(systemName: comment.userVote == 1 ? "arrow.up.circle.fill" : "arrow.up.circle")
+                            .foregroundStyle(comment.userVote == 1 ? .orange : .secondary)
+                    }
+                    .buttonStyle(.plain)
 
-                    Text("\(comment.voteCount)")
+                    Text("\(localUpvotes - localDownvotes)")
                         .font(.caption)
 
-                    Image(systemName: comment.userVote == -1 ? "arrow.down.circle.fill" : "arrow.down.circle")
-                        .foregroundStyle(comment.userVote == -1 ? .purple : .secondary)
+                    Button {
+                        localDownvotes += 1
+                        onVote?(comment.id, -1)
+                    } label: {
+                        Image(systemName: comment.userVote == -1 ? "arrow.down.circle.fill" : "arrow.down.circle")
+                            .foregroundStyle(comment.userVote == -1 ? .purple : .secondary)
+                    }
+                    .buttonStyle(.plain)
                 }
 
                 Button {
@@ -69,7 +87,7 @@ public struct CommentView: View {
             if depth < maxDepth && !comment.replies.isEmpty {
                 VStack(alignment: .leading, spacing: 0) {
                     ForEach(comment.replies) { reply in
-                        CommentView(comment: reply, postId: postId, depth: depth + 1)
+                        CommentView(comment: reply, postId: postId, depth: depth + 1, onVote: onVote)
                     }
                 }
                 .padding(.leading, 16)

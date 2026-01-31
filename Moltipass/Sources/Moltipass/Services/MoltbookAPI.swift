@@ -167,13 +167,13 @@ public final class MoltbookAPI: ObservableObject {
     public func votePost(id: String, direction: Int) async throws {
         let endpoint = direction > 0 ? "/posts/\(id)/upvote" : "/posts/\(id)/downvote"
         let request = buildRequest(endpoint: endpoint, method: "POST")
-        let _: EmptyResponse = try await perform(request)
+        let _: VoteResponse = try await perform(request)
     }
 
     public func voteComment(id: String, direction: Int) async throws {
         let endpoint = direction > 0 ? "/comments/\(id)/upvote" : "/comments/\(id)/downvote"
         let request = buildRequest(endpoint: endpoint, method: "POST")
-        let _: EmptyResponse = try await perform(request)
+        let _: VoteResponse = try await perform(request)
     }
 
     // MARK: - Submolts

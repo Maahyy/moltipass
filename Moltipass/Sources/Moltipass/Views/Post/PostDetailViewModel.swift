@@ -51,4 +51,12 @@ public class PostDetailViewModel {
             post.downvotes = oldDownvotes
         }
     }
+
+    public func voteComment(id: String, direction: Int) async {
+        do {
+            try await api.voteComment(id: id, direction: direction)
+        } catch {
+            // Silently fail - UI already updated optimistically
+        }
+    }
 }
