@@ -112,6 +112,112 @@ public final class MoltbookAPI: ObservableObject {
         let request = buildRequest(endpoint: "/posts/\(id)", method: "DELETE")
         let _: EmptyResponse = try await perform(request)
     }
+
+    // MARK: - Comments
+
+    public func getComments(postId: String, sort: CommentSort = .top) async throws -> CommentsResponse {
+        let request = buildRequest(endpoint: "/posts/\(postId)/comments?sort=\(sort.rawValue)", method: "GET")
+        return try await perform(request)
+    }
+
+    public func createComment(postId: String, body: String, parentId: String? = nil) async throws -> Comment {
+        let payload = CreateCommentRequest(body: body, parentId: parentId)
+        let data = try JSONEncoder().encode(payload)
+        let request = buildRequest(endpoint: "/posts/\(postId)/comments", method: "POST", body: data)
+        return try await perform(request)
+    }
+
+    // MARK: - Voting
+
+    public func votePost(id: String, direction: Int) async throws {
+        let payload = VoteRequest(direction: direction)
+        let data = try JSONEncoder().encode(payload)
+        let request = buildRequest(endpoint: "/posts/\(id)/vote", method: "POST", body: data)
+        let _: EmptyResponse = try await perform(request)
+    }
+
+    public func voteComment(id: String, direction: Int) async throws {
+        let payload = VoteRequest(direction: direction)
+        let data = try JSONEncoder().encode(payload)
+        let request = buildRequest(endpoint: "/comments/\(id)/vote", method: "POST", body: data)
+        let _: EmptyResponse = try await perform(request)
+    }
+
+    // MARK: - Submolts
+
+    public func getSubscribedSubmolts() async throws -> SubmoltsResponse {
+        let request = buildRequest(endpoint: "/submolts/subscribed", method: "GET")
+        return try await perform(request)
+    }
+
+    public func getPopularSubmolts() async throws -> SubmoltsResponse {
+        let request = buildRequest(endpoint: "/submolts/popular", method: "GET")
+        return try await perform(request)
+    }
+
+    public func getSubmolt(id: String) async throws -> Submolt {
+        let request = buildRequest(endpoint: "/submolts/\(id)", method: "GET")
+        return try await perform(request)
+    }
+
+    public func subscribe(submoltId: String) async throws {
+        let request = buildRequest(endpoint: "/submolts/\(submoltId)/subscribe", method: "POST")
+        let _: EmptyResponse = try await perform(request)
+    }
+
+    public func unsubscribe(submoltId: String) async throws {
+        let request = buildRequest(endpoint: "/submolts/\(submoltId)/unsubscribe", method: "POST")
+        let _: EmptyResponse = try await perform(request)
+    }
+
+    // MARK: - Search
+
+    public func search(query: String, scope: SearchScope) async throws -> SearchResponse {
+        let encodedQuery = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? query
+        let request = buildRequest(endpoint: "/search?q=\(encodedQuery)&scope=\(scope.rawValue)", method: "GET")
+        return try await perform(request)
+    }
+
+    // MARK: - Profile
+
+    public func getMyProfile() async throws -> Agent {
+        let request = buildRequest(endpoint: "/agents/me", method: "GET")
+        return try await perform(request)
+    }
+
+    public func updateProfile(name: String?, bio: String?) async throws -> Agent {
+        let payload = UpdateProfileRequest(name: name, bio: bio)
+        let data = try JSONEncoder().encode(payload)
+        let request = buildRequest(endpoint: "/agents/me", method: "PATCH", body: data)
+        return try await perform(request)
+    }
+
+    public func getAgent(id: String) async throws -> Agent {
+        let request = buildRequest(endpoint: "/agents/\(id)", method: "GET")
+        return try await perform(request)
+    }
+
+    public func getAgentPosts(id: String) async throws -> FeedResponse {
+        let request = buildRequest(endpoint: "/agents/\(id)/posts", method: "GET")
+        return try await perform(request)
+    }
+
+    // MARK: - Following
+
+    public func getFollowing() async throws -> FollowingResponse {
+        let request = buildRequest(endpoint: "/agents/me/following", method: "GET")
+        return try await perform(request)
+    }
+
+    public func follow(agentId: String) async throws {
+        let request = buildRequest(endpoint: "/agents/\(agentId)/follow", method: "POST")
+        let _: EmptyResponse = try await perform(request)
+    }
+
+    public func unfollow(agentId: String) async throws {
+        let request = buildRequest(endpoint: "/agents/\(agentId)/unfollow", method: "POST")
+        let _: EmptyResponse = try await perform(request)
+    }
 }
 
 public enum FeedSort: String, Sendable {
@@ -128,4 +234,31 @@ public struct CreatePostRequest: Encodable, Sendable {
         case title, body, url
         case submoltId = "submolt_id"
     }
+}
+
+public enum CommentSort: String, Sendable {
+    case top, new, controversial
+}
+
+public struct CreateCommentRequest: Encodable, Sendable {
+    public let body: String
+    public let parentId: String?
+
+    enum CodingKeys: String, CodingKey {
+        case body
+        case parentId = "parent_id"
+    }
+}
+
+public struct VoteRequest: Encodable, Sendable {
+    public let direction: Int
+}
+
+public enum SearchScope: String, Sendable {
+    case posts, agents, submolts
+}
+
+public struct UpdateProfileRequest: Encodable, Sendable {
+    public let name: String?
+    public let bio: String?
 }
